@@ -6,19 +6,19 @@ var templateUrlRegex = /templateUrl\s*:(\s*['"`](.*?)['"`]\s*([,}]))/gm;
 var stylesRegex = /styleUrls *:(\s*\[[^\]]*?\])/g;
 var stringRegex = /(['`"])((?:[^\\]\\\1|.)*?)\1/g;
 
-function replaceStringsWithRequires(string) {
+function replaceStringsWithRequires(string, loaders) {
   return string.replace(stringRegex, function (match, quote, url) {
     if (url.charAt(0) !== ".") {
       url = "./" + url;
     }
-    return "require('" + url + "')";
+    return "require('" + loaders + url + "')";
   });
 }
 
 module.exports = function(source, sourcemap) {
 
   var config = {};
-  var query = loaderUtils.parseQuery(this.query);
+  var query = loaderUtils.getOptions(this);
   var styleProperty = 'styles';
   var templateProperty = 'template';
 
@@ -41,14 +41,14 @@ module.exports = function(source, sourcemap) {
                  // with: template: require('./path/to/template.html')
                  // or: templateUrl: require('./path/to/template.html')
                  // if `keepUrl` query parameter is set to true.
-                 return templateProperty + ":" + replaceStringsWithRequires(url);
+                 return templateProperty + ":" + replaceStringsWithRequires(url, config.templateLoaders ? config.templateLoaders(source) : "");
                })
                .replace(stylesRegex, function (match, urls) {
                  // replace: stylesUrl: ['./foo.css', "./baz.css", "./index.component.css"]
                  // with: styles: [require('./foo.css'), require("./baz.css"), require("./index.component.css")]
                  // or: styleUrls: [require('./foo.css'), require("./baz.css"), require("./index.component.css")]
                  // if `keepUrl` query parameter is set to true.
-                 return styleProperty + ":" + replaceStringsWithRequires(urls);
+                 return styleProperty + ":" + replaceStringsWithRequires(urls, config.styleLoaders ? config.styleLoaders(source) : "");
                });
 
   // Support for tests

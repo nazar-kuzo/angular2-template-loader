@@ -1,6 +1,6 @@
 {
-  "name": "angular2-template-loader",
-  "version": "0.6.2",
+  "name": "universal-angular-template-loader",
+  "version": "1.0.0",
   "description": "Angular webpack loader that inlines your angular templates and stylesheets into angular components.  ",
   "main": "index.js",
   "scripts": {
@@ -35,6 +35,6 @@
     "should": "^9.0.0"
   },
   "dependencies": {
-    "loader-utils": "^0.2.15"
+    "loader-utils": "^1.1.0"
   }
 }
